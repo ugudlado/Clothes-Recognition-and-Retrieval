@@ -43,6 +43,7 @@ def Detect_Clothes(img, model_yolov3, eager_execution=True):
     return list_obj
 
 def Detect_Clothes_and_Crop(img_tensor, model, threshold=0.5):
+    images_by_label = {}
     list_obj = Detect_Clothes(img_tensor, model)
 
     img = np.squeeze(img_tensor.numpy())
@@ -54,10 +55,17 @@ def Detect_Clothes_and_Crop(img_tensor, model, threshold=0.5):
         if obj['label'] == 'short_sleeve_top' and obj['confidence']>threshold:
             img_crop = img[int(obj['y1']*img_height):int(obj['y2']*img_height), int(obj['x1']*img_width):int(obj['x2']*img_width), :]
 
-    return img_crop
+        if obj['confidence']>threshold:
+            cropped_img = img[int(obj['y1']*img_height):int(obj['y2']*img_height), int(obj['x1']*img_width):int(obj['x2']*img_width), :]
+            if obj['label'] in images_by_label:
+                images_by_label[obj['label']].append(cropped_img)
+            else:
+                images_by_label[obj['label']] = [cropped_img]
+            
+    return images_by_label
 
 if __name__ == '__main__':
-    img = Read_Img_2_Tensor('./images/test6.jpg')
+    img = Read_Img_2_Tensor('./images/test7.jpg')
     model = Load_DeepFashion2_Yolov3()
     list_obj = Detect_Clothes(img, model)
     img_with_boxes = Draw_Bounding_Box(img, list_obj)
