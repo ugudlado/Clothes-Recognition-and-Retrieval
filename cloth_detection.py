@@ -5,12 +5,15 @@ Created on Sat Jun 22 16:01:13 2019
 @author: Wei-Hsiang, Shen
 """
 
-import numpy as np
 import time
-import tensorflow as tf
-import cv2
 
-from utils_my import Read_Img_2_Tensor, Load_DeepFashion2_Yolov3, Draw_Bounding_Box
+import cv2
+import numpy as np
+import tensorflow as tf
+
+from utils_my import (Draw_Bounding_Box, Load_DeepFashion2_Yolov3,
+                      Read_Img_2_Tensor)
+
 
 def Detect_Clothes(img, model_yolov3, eager_execution=True):
     """Detect clothes in an image using Yolo-v3 model trained on DeepFashion2 dataset"""
@@ -65,7 +68,7 @@ def Detect_Clothes_and_Crop(img_tensor, model, threshold=0.5):
     return images_by_label
 
 if __name__ == '__main__':
-    img = Read_Img_2_Tensor('./images/test7.jpg')
+    img = Read_Img_2_Tensor('./images/test/test7.jpg')
     model = Load_DeepFashion2_Yolov3()
     list_obj = Detect_Clothes(img, model)
     img_with_boxes = Draw_Bounding_Box(img, list_obj)
@@ -73,4 +76,4 @@ if __name__ == '__main__':
     cv2.imshow("Clothes detection", cv2.cvtColor(img_with_boxes, cv2.COLOR_RGB2BGR))
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-    cv2.imwrite("./images/test6_clothes_detected.jpg", cv2.cvtColor(img_with_boxes, cv2.COLOR_RGB2BGR)*255)
+    cv2.imwrite("./images/test7_clothes_detected.jpg", cv2.cvtColor(img_with_boxes, cv2.COLOR_RGB2BGR)*255)
